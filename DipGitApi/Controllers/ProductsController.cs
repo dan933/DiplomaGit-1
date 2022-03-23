@@ -6,9 +6,20 @@ using RestSharp;
 using Microsoft.Extensions.Configuration;
 using DipGitApiLib;
 using System.Text.Json;
+using RestSharp.Authenticators;
+using RestSharp.Serializers;
 
 namespace DipGitApi.Controllers
 {
+    // public class Request {
+    //     public Request(Product product)
+    //     {
+    //         Product = product;
+    //     }
+    //    public Product Product { get; set; }
+    // }
+
+
     [ApiController]
     [Route("[controller]")]
     public class ProductsController : ControllerBase
@@ -38,7 +49,7 @@ namespace DipGitApi.Controllers
             request.AddHeader("x-apikey", _accessKey);
             request.AddHeader("content-type", "application/json");
             request.AddQueryParameter("q", search);
-            var response = await _client.GetAsync(request);
+            var response = _client.Get(request);
 
             if(response.Content.Contains("_id")) {
                 return Ok(response.Content);
@@ -53,8 +64,14 @@ namespace DipGitApi.Controllers
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAll() {
-            // return all item as a Products object
-            return BadRequest();
+            var client = new RestClient("https://diplomagit-e6cc.restdb.io/rest/products");
+            var request = new RestRequest()
+            .AddHeader("cache-control", "no-cache")
+            .AddHeader("x-apikey", "35ef07b4da07e33f8da131df3ef7b29b87d9e")
+            .AddHeader("content-type", "application/json");
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            return Ok(response.Content);
         }
 
         /// <summary>
@@ -64,8 +81,39 @@ namespace DipGitApi.Controllers
         /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Add(Product newProduct) {
-            return BadRequest();
+
+            var body = JsonSerializer.Serialize(newProduct);
+
+            var client = new RestClient("https://diplomagit-e6cc.restdb.io/rest/products");
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("x-apikey", "35ef07b4da07e33f8da131df3ef7b29b87d9e");
+            request.AddHeader("content-type", "application/json");
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+            IRestResponse response = await client.ExecuteAsync(request);
+            return Ok(response.Content);
         }
+
+        /// <summary>
+        /// Update a product
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="updatedProduct"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> Update(string id,Product updatedProduct) {
+
+            var body = JsonSerializer.Serialize(updatedProduct);
+
+            var client = new RestClient($"https://diplomagit-e6cc.restdb.io/rest/products/{id}");
+            var request = new RestRequest(Method.PUT);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("x-apikey", "35ef07b4da07e33f8da131df3ef7b29b87d9e");
+            request.AddHeader("content-type", "application/json");
+            request.AddParameter("application/json", body, ParameterType.RequestBody);
+            IRestResponse response = await client.ExecuteAsync(request);
+            return Ok(response.Content);
+        } 
 
         /// <summary>
         /// Deletes a product based on id
@@ -74,7 +122,14 @@ namespace DipGitApi.Controllers
         /// <returns></returns>
         [HttpDelete]
         public async Task<IActionResult> Delete(string id) {
-            return BadRequest();
+            var client = new RestClient($"https://diplomagit-e6cc.restdb.io/rest/products/{id}");
+            var request = new RestRequest(Method.DELETE);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("x-apikey", "35ef07b4da07e33f8da131df3ef7b29b87d9e");
+            request.AddHeader("content-type", "application/json");
+            IRestResponse response = await client.ExecuteAsync(request);
+
+            return Ok(response.Content);
         }
     }
 }
