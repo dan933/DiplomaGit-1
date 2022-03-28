@@ -69,9 +69,20 @@ namespace DipGitApi.Controllers
             .AddHeader("cache-control", "no-cache")
             .AddHeader("x-apikey", "35ef07b4da07e33f8da131df3ef7b29b87d9e")
             .AddHeader("content-type", "application/json");
+
+            
             IRestResponse response = await client.ExecuteAsync(request);
 
-            return Ok(response.Content);
+            var listProducts = JsonSerializer.Deserialize<List<Product>>(response.Content);
+
+            var productFunction = new Products();
+            
+            var totalQuantity = productFunction.GetTotalQtyProducts(listProducts);
+            var totalValues = productFunction.GetTotalValueProducts(listProducts);
+
+            ProductResponse productResponse = new ProductResponse(listProducts, totalQuantity, totalValues);
+
+            return Ok(productResponse);
         }
 
         /// <summary>
