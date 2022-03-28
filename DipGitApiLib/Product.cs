@@ -2,25 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace DipGitApiLib {
-    public class Product {
+namespace DipGitApiLib
+{
+    public class Product
+    {
         public string Name { get; set; }
         public float Price { get; set; }
         public int Qty { get; set; }
     }
 
-    public class Products {
+    public class Products
+    {
         public List<Product> ProductList { get; set; }
 
         /// <summary>
         /// Sums the qty of all items in ProductList together
         /// </summary>
         /// <returns></returns>
-        public int GetTotalQtyProducts(List<Product> ProductList) {
+        public int GetTotalQtyProducts(List<Product> ProductList)
+        {
             int totalQtyProducts = 0;
             // using a loop to go through the list and count qty
 
-            ProductList.ForEach(Product => {
+            ProductList.ForEach(Product =>
+            {
                 totalQtyProducts += Product.Qty;
             });
 
@@ -31,19 +36,38 @@ namespace DipGitApiLib {
         /// Gets the total cost of inventory, that is the sum of the cost of all items 
         /// </summary>
         /// <returns></returns>
-        public float GetTotalValueProducts(List<Product> ProductList) {
-             
-           float TotalQtyValue = 0;
-    
-        // again loop through the values and multiply the row qty with row price
+        public float GetTotalValueProducts(List<Product> ProductList)
+        {
 
-           ProductList.ForEach(Product=> {
-           TotalQtyValue += (Product.Qty * Product.Price);
+            float TotalQtyValue = 0;
 
-        });
-        
-        return TotalQtyValue;
+            // again loop through the values and multiply the row qty with row price
+
+            ProductList.ForEach(Product =>
+            {
+                TotalQtyValue += (Product.Qty * Product.Price);
+
+            });
+
+            return TotalQtyValue;
 
         }
+    }
+
+    public class ProductResponse
+    {
+
+        public ProductResponse(List<Product> productList, int totalQuantity, float totalValues)
+        {
+            ProductList = productList;
+            TotalQty = totalQuantity;
+            TotalValues = totalValues;
+        }
+
+        Products productFunctions = new Products();
+
+        public List<Product> ProductList { get; set; }
+        public int TotalQty { get; set; }
+        public float TotalValues { get; set; }
     }
 }
