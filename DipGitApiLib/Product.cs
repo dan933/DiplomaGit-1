@@ -4,18 +4,11 @@ using System.Linq;
 
 namespace DipGitApiLib
 {
-    public class Product 
+    public class Product
     {
         public string Name { get; set; }
         public float Price { get; set; }
         public int Qty { get; set; }
-
-        public Product () {}
-        public Product (string name, float price, int qty) {
-            this.Name = name;
-            this.Price = price;
-            this.Qty = qty;
-        }
     }
 
     public class Products
